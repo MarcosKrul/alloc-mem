@@ -52,6 +52,14 @@ typedef struct fragment_t {
 
 /*
  *
+ * init_mem
+ * Inicializa o bloco de memoria.
+ *
+*/
+void init_mem();
+
+/*
+ *
  * alloc_mem
  * Aloca um bloco de memoria.
  * Parametro 1: tamanho do bloco.

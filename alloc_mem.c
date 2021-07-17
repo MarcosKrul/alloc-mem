@@ -1,5 +1,13 @@
 #include "alloc_mem.h"
 
+
+/* ================================================================
+                        VARIAVEIS PRIVADAS                      
+================================================================ */
+
+Fragment* _list;
+
+
 /* ================================================================
                   PROTOTIPOS FUNCOES PRIVADAS                      
 ================================================================ */
@@ -20,6 +28,16 @@ void* _alloc_worst_fit(size_t);
 /* ================================================================
                         FUNCOES PRINCIPAIS                      
 ================================================================ */
+
+void init_mem() {
+  _list = (Fragment*) malloc(MEM_BASE);
+  if (_list == NULL) {
+    printf("ERRO: alocacao do bloco base \n");
+    return;
+  } 
+  _list->next = NULL;
+  _list->size = MEM_BASE;
+}
 
 
 void* alloc_mem(size_t tam) {
