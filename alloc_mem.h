@@ -50,4 +50,14 @@ typedef struct fragment_t {
 } Fragment;
 
 
+/*
+ *
+ * alloc_mem
+ * Aloca um bloco de memoria.
+ * Parametro 1: tamanho do bloco.
+ * 
+*/
+void* alloc_mem(size_t);
+
+
 #endif
