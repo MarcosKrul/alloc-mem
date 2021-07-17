@@ -2,6 +2,12 @@
 #define ALLOC_MEM_
 
 
+// dependencias
+#include <stdio.h>
+#include <stdlib.h>
+
+
+
 // algoritmos de alocacao
 #define FIRST_FIT 1
 #define BEST_FIT 2
@@ -22,6 +28,26 @@
 #ifndef ALG_ALOC
 #define ALG_ALOC FIRST_FIT
 #endif
+
+/* 
+ *
+ * MEM_BASE
+ * Define o tamanho da memoria base utilizada.
+ * Default: 1KB
+ *
+*/
+#define MEM_BASE 1024
+
+/*
+ *
+ * Fragment.
+ * Estrutura para lista de fragmentos da memoria.
+ *
+*/
+typedef struct fragment_t {
+  size_t size;
+  struct fragment_t* next;
+} Fragment;
 
 
 #endif
