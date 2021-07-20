@@ -39,6 +39,15 @@ void init_mem() {
   _list->size = MEM_BASE;
 }
 
+void print_mem() {
+  Fragment* cur = _list;
+
+  while (cur != NULL) {
+    printf("%d - %p\n", cur->size, cur->next);
+    cur = cur->next;
+  }
+}
+
 
 void* alloc_mem(size_t tam) {
   #if ALG_ALOC == FIRST_FIT
@@ -51,6 +60,7 @@ void* alloc_mem(size_t tam) {
     return _alloc_worst_fit(tam);
   #else
     printf("ERRO: algoritmo de alocacao nao suportado \n");
+    return NULL;
   #endif
 }
 

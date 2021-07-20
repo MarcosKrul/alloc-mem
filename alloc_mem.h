@@ -7,6 +7,8 @@
 #include <stdlib.h>
 
 
+#define DEBUG 1
+
 
 // algoritmos de alocacao
 #define FIRST_FIT 1
@@ -67,5 +69,13 @@ void init_mem();
 */
 void* alloc_mem(size_t);
 
+/*
+ *
+ * print_mem
+ * Funcao auxiliar, define uma representacao
+ * grafica para a lista de fragmentos.
+ *
+*/
+void print_mem();
 
 #endif
