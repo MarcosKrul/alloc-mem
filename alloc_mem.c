@@ -7,6 +7,14 @@
 
 Fragment* _list;
 
+/*
+  *
+  * Tamanho do fragmento.
+  * Utilizada para ajustar o ponteiro na liberacao de memoria.
+  *
+*/
+const size_t _fragmentLength = sizeof(Fragment);
+
 
 /* ================================================================
                   PROTOTIPOS FUNCOES PRIVADAS                      
