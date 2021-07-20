@@ -47,7 +47,7 @@
  *
 */
 typedef struct fragment_t {
-  size_t size;
+  int size;
   struct fragment_t* next;
 } Fragment;
 
