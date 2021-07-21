@@ -71,6 +71,16 @@ void* alloc_mem(size_t);
 
 /*
  *
+ * free_mem
+ * Libera um fragmento de memoria
+ * alocado anteriormente.
+ * Parametro 1: ponteiro para o fragmento.
+ *
+*/
+void free_mem(void*);
+
+/*
+ *
  * print_mem
  * Funcao auxiliar, define uma representacao
  * grafica para a lista de fragmentos.

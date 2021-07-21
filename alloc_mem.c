@@ -56,6 +56,21 @@ void print_mem() {
   }
 }
 
+void free_mem(void* ptr) {
+  if (ptr == NULL) return;
+
+  Fragment* to_free = (Fragment*) (ptr - _fragmentLength);
+  if (to_free->size >= 0) {
+    #if DEBUG
+      printf("WARNING: bloco nao esta em uso \n"); 
+    #endif
+    return;
+  }
+
+  to_free->size = (-1) * to_free->size;
+
+  // TO-DO: somar o tamanho com blocos livres adjacentes (next ou prev)
+}
 
 void* alloc_mem(size_t tam) {
   #if ALG_ALOC == FIRST_FIT
