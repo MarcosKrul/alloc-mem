@@ -69,7 +69,29 @@ void free_mem(void* ptr) {
 
   to_free->size = (-1) * to_free->size;
 
-  // TO-DO: somar o tamanho com blocos livres adjacentes (next ou prev)
+  Fragment* prev = NULL;
+  Fragment* aux = _list;
+
+  while (aux->next != NULL && aux != to_free) {
+    prev = aux;
+    aux = aux->next;
+  }
+
+  if (aux->next != NULL) {
+    aux = aux->next;
+    
+    // merge com o proximo fragmento
+    if (aux->size >= 0) {
+      to_free->size = to_free->size + aux->size + _fragmentLength;
+      to_free->next = aux->next;
+    }
+  }
+
+  // merge com o fragmento anterior
+  if (prev != NULL && prev->size >= 0) {
+    prev->size = prev->size + to_free->size + _fragmentLength;
+    prev->next = to_free->next;
+  }
 }
 
 void* alloc_mem(size_t tam) {
