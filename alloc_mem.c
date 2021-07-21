@@ -77,7 +77,54 @@ void* alloc_mem(size_t tam) {
                         FUNCOES PRIVADAS
 ================================================================ */
 
-void* _alloc_first_fit(size_t tam) { return NULL; }
+void* _alloc_first_fit(size_t tam) {  
+  if (tam > MEM_BASE) {
+    #if DEBUG
+      printf("WARNING: nao foi possivel alocar memoria \n");
+    #endif
+    return NULL;
+  }
+
+  void* aux;
+  Fragment* prev = NULL;
+  Fragment* cur = _list;
+
+  #if DEBUG
+    printf("QUER ALOCAR: %ld (+%ld)\n", tam, _fragmentLength);
+    printf("TAMANHO INICIAL: %d\n", cur->size);
+  #endif
+
+  while (cur != NULL) {
+    prev = cur;
+    
+    // busca o primeiro fragmento que possua tamanho desejado: tam + estrutura de header (armazena o tamanho para liberar depois)
+    if (cur->size >= (tam + _fragmentLength)) {
+      const int length = cur->size;
+
+      aux = cur + cur->size - tam;
+      cur = aux;
+      cur->next = prev->next;
+      cur->size = (-1) * tam;
+      prev->next = cur;
+      prev->size = length - tam - _fragmentLength;
+
+      #if DEBUG
+        printf("TAMANHO FINAL: %d\n", prev->size);
+      #endif
+
+      return (aux + _fragmentLength);
+    }
+
+    cur = cur->next;
+  }
+
+  #if DEBUG
+    printf("WARNING: nao foi possivel alocar memoria \n");
+  #endif
+
+  return NULL;
+}
+
 void* _alloc_next_fit(size_t tam) { return NULL; }
 void* _alloc_best_fit(size_t tam) { return NULL; }
 void* _alloc_worst_fit(size_t tam) { return NULL; }
