@@ -137,10 +137,12 @@ void* _alloc_first_fit(size_t tam) {
       prev = cur;
 
       cur = cur + tam + _fragmentLength;
-      cur->size = prev->size - tam - _fragmentLength;
-      cur->next = prev->next;
-
-      prev->next = cur;
+      const int new_length = prev->size - tam - _fragmentLength;
+      if (new_length > 0) {
+        cur->size = prev->size - tam - _fragmentLength;
+        cur->next = prev->next;
+        prev->next = cur;
+      }
       prev->size = (-1)* tam;
 
       #if DEBUG
