@@ -216,6 +216,46 @@ void* _alloc_next_fit(size_t tam) {
   return NULL;
 }
 
-void* _alloc_best_fit(size_t tam) { return NULL; }
+void* _alloc_best_fit(size_t tam) { 
+  if (tam > MEM_BASE) {
+    #if DEBUG
+      printf("WARNING: nao foi possivel alocar memoria \n");
+    #endif
+    return NULL;
+  }
+
+  int sm = MEM_BASE;
+  Fragment* aux = NULL;
+  Fragment* cur_prev = _list;
+
+  while (cur_prev != NULL) {
+    if (cur_prev->size >= ((int)(tam + _fragmentLength)) && cur_prev->size <= sm) {
+      sm = cur_prev->size;
+      aux = cur_prev;
+    }
+    cur_prev = cur_prev->next;
+  }
+
+  if (aux == NULL) {
+    #if DEBUG
+      printf("WARNING: best fit nao achou fragmento p/ alocar");
+    #endif
+    return NULL;
+  }
+
+  cur_prev = aux;
+  aux = aux + tam;
+  
+  const int new_length = cur_prev->size - tam;
+  if (new_length > 0) {
+    aux->size = new_length;
+    aux->next = cur_prev->next;
+    cur_prev->next = aux;
+  }
+  cur_prev->size = (-1)* tam;
+
+  return ((void*)cur_prev + _fragmentLength);
+}
+
 void* _alloc_worst_fit(size_t tam) { return NULL; }
 
