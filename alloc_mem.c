@@ -122,34 +122,32 @@ void* _alloc_first_fit(size_t tam) {
     return NULL;
   }
 
-  void* aux;
   Fragment* prev = NULL;
   Fragment* cur = _list;
 
-  #if DEBUG
-    printf("QUER ALOCAR: %ld (+%ld)\n", tam, _fragmentLength);
-    printf("TAMANHO INICIAL: %d\n", cur->size);
-  #endif
-
   while (cur != NULL) {
-    prev = cur;
-    
-    // busca o primeiro fragmento que possua tamanho desejado: tam + estrutura de header (armazena o tamanho para liberar depois)
-    if (cur->size >= (tam + _fragmentLength)) {
-      const int length = cur->size;
+    #if DEBUG
+      printf("QUER ALOCAR: %ld (+%ld)\n", tam, _fragmentLength);
+      printf("TAMANHO DO FRAG ATUAL: %d\n", cur->size);
+    #endif
 
-      aux = cur + cur->size - tam;
-      cur = aux;
+    // busca o primeiro fragmento que possua tamanho desejado: tam + estrutura de header (armazena o tamanho para liberar depois)
+    if (cur->size >= ((int)(tam + _fragmentLength))) {
+
+      prev = cur;
+
+      cur = cur + tam + _fragmentLength;
+      cur->size = prev->size - tam - _fragmentLength;
       cur->next = prev->next;
-      cur->size = (-1) * tam;
+
       prev->next = cur;
-      prev->size = length - tam - _fragmentLength;
+      prev->size = (-1)* tam;
 
       #if DEBUG
-        printf("TAMANHO FINAL: %d\n", prev->size);
+        printf("TAMANHO FINAL: %d\n", cur->size);
       #endif
 
-      return (aux + _fragmentLength);
+      return ((void*)prev + _fragmentLength);
     }
 
     cur = cur->next;
