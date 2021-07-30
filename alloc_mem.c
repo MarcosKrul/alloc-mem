@@ -181,7 +181,7 @@ void* _alloc_next_fit(size_t tam) {
       printf("TAMANHO DO FRAG ATUAL: %d\n", cur->size);
     #endif
 
-    // busca o primeiro fragmento que possua tamanho desejado: tam + estrutura de header (armazena o tamanho para liberar depois)
+    // busca o primeiro fragmento que possua tamanho desejado, a partir do ultimo
     if (cur->size >= ((int)(tam + _fragmentLength))) {
 
       prev = cur;
@@ -196,7 +196,7 @@ void* _alloc_next_fit(size_t tam) {
       prev->size = (-1)* tam;
 
       // salva ultimo fragmento
-      // proxima alocacao comeca daqui
+      // proxima busca comeca daqui
       _last = prev;
 
       #if DEBUG
@@ -257,5 +257,44 @@ void* _alloc_best_fit(size_t tam) {
   return ((void*)cur_prev + _fragmentLength);
 }
 
-void* _alloc_worst_fit(size_t tam) { return NULL; }
+void* _alloc_worst_fit(size_t tam) { 
+   if (tam > MEM_BASE) {
+    #if DEBUG
+      printf("WARNING: nao foi possivel alocar memoria \n");
+    #endif
+    return NULL;
+  }
+
+  int bt = 0;
+  Fragment* aux = NULL;
+  Fragment* cur_prev = _list;
+
+  while (cur_prev != NULL) {
+    if (cur_prev->size >= ((int)(tam + _fragmentLength)) && cur_prev->size >= bt) {
+      bt = cur_prev->size;
+      aux = cur_prev;
+    }
+    cur_prev = cur_prev->next;
+  }
+
+  if (aux == NULL) {
+    #if DEBUG
+      printf("WARNING: worst fit nao achou fragmento p/ alocar");
+    #endif
+    return NULL;
+  }
+
+  cur_prev = aux;
+  aux = aux + tam;
+  
+  const int new_length = cur_prev->size - tam;
+  if (new_length > 0) {
+    aux->size = new_length;
+    aux->next = cur_prev->next;
+    cur_prev->next = aux;
+  }
+  cur_prev->size = (-1)* tam;
+
+  return ((void*)cur_prev + _fragmentLength);
+}
 
