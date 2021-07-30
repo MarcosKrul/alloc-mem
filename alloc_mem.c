@@ -6,6 +6,7 @@
 ================================================================ */
 
 Fragment* _list;
+Fragment* _last;
 
 /*
   *
@@ -45,6 +46,7 @@ void init_mem() {
   } 
   _list->next = NULL;
   _list->size = MEM_BASE;
+  _last = _list; // para next fit
 }
 
 void print_mem() {
@@ -162,7 +164,58 @@ void* _alloc_first_fit(size_t tam) {
   return NULL;
 }
 
-void* _alloc_next_fit(size_t tam) { return NULL; }
+void* _alloc_next_fit(size_t tam) {
+  if (tam > MEM_BASE) {
+    #if DEBUG
+      printf("WARNING: nao foi possivel alocar memoria \n");
+    #endif
+    return NULL;
+  }
+
+  Fragment* prev = NULL;
+  Fragment* cur = _last;
+
+  do {
+    #if DEBUG
+      printf("QUER ALOCAR: %ld (+%ld)\n", tam, _fragmentLength);
+      printf("TAMANHO DO FRAG ATUAL: %d\n", cur->size);
+    #endif
+
+    // busca o primeiro fragmento que possua tamanho desejado: tam + estrutura de header (armazena o tamanho para liberar depois)
+    if (cur->size >= ((int)(tam + _fragmentLength))) {
+
+      prev = cur;
+      cur = cur + tam + _fragmentLength;
+      
+      const int new_length = prev->size - tam - _fragmentLength;
+      if (new_length > 0) {
+        cur->size = prev->size - tam - _fragmentLength;
+        cur->next = prev->next;
+        prev->next = cur;
+      }
+      prev->size = (-1)* tam;
+
+      // salva ultimo fragmento
+      // proxima alocacao comeca daqui
+      _last = prev;
+
+      #if DEBUG
+        printf("TAMANHO FINAL: %d\n", cur->size);
+      #endif
+
+      return ((void*)prev + _fragmentLength);
+    }
+
+    cur = cur->next == NULL? _list : cur->next;
+  } while (cur != _last);
+
+  #if DEBUG
+    printf("WARNING: nao foi possivel alocar memoria \n");
+  #endif
+
+  return NULL;
+}
+
 void* _alloc_best_fit(size_t tam) { return NULL; }
 void* _alloc_worst_fit(size_t tam) { return NULL; }
 
