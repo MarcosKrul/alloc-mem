@@ -31,7 +31,7 @@ const size_t _fragmentLength = sizeof(Fragment);
 void* _alloc_next_fit(size_t);
 void* _alloc_best_fit(size_t);
 void* _alloc_first_fit(size_t);
-void* _alloc_worst_fit(size_t);
+void* _alloc_best_worst_fit(size_t);
 
 
 /* ================================================================
@@ -101,10 +101,8 @@ void* alloc_mem(size_t tam) {
     return _alloc_first_fit(tam);
   #elif ALG_ALOC == NEXT_FIT 
     return _alloc_next_fit(tam);
-  #elif ALG_ALOC == BEST_FIT 
-    return _alloc_best_fit(tam);
-  #elif ALG_ALOC == WORST_FIT 
-    return _alloc_worst_fit(tam);
+  #elif ALG_ALOC == BEST_FIT || ALG_ALOC == WORST_FIT
+    return _alloc_best_worst_fit(tam);
   #else
     printf("ERRO: algoritmo de alocacao nao suportado \n");
     return NULL;
@@ -216,7 +214,7 @@ void* _alloc_next_fit(size_t tam) {
   return NULL;
 }
 
-void* _alloc_best_fit(size_t tam) { 
+void* _alloc_best_worst_fit(size_t tam) { 
   if (tam > MEM_BASE) {
     #if DEBUG
       printf("WARNING: nao foi possivel alocar memoria \n");
@@ -224,62 +222,35 @@ void* _alloc_best_fit(size_t tam) {
     return NULL;
   }
 
+  #if ALG_ALOC == BEST_FIT
   int sm = MEM_BASE;
+  #elif ALG_ALOC == WORST_FIT 
+  int sm = 0;
+  #else
+    #if DEGUB
+      printf("ERROR: mapeamento funcao-algoritmo errado \n");
+    #endif
+    return NULL;
+  #endif
+
   Fragment* aux = NULL;
   Fragment* cur_prev = _list;
 
   while (cur_prev != NULL) {
+    #if ALG_ALOC == BEST_FIT
     if (cur_prev->size >= ((int)(tam + _fragmentLength)) && cur_prev->size <= sm) {
+    #elif ALG_ALOC == WORST_FIT 
+    if (cur_prev->size >= ((int)(tam + _fragmentLength)) && cur_prev->size >= sm) {
       sm = cur_prev->size;
       aux = cur_prev;
     }
+    #endif
     cur_prev = cur_prev->next;
   }
 
   if (aux == NULL) {
-    #if DEBUG
-      printf("WARNING: best fit nao achou fragmento p/ alocar");
-    #endif
-    return NULL;
-  }
-
-  cur_prev = aux;
-  aux = aux + tam;
-  
-  const int new_length = cur_prev->size - tam;
-  if (new_length > 0) {
-    aux->size = new_length;
-    aux->next = cur_prev->next;
-    cur_prev->next = aux;
-  }
-  cur_prev->size = (-1)* tam;
-
-  return ((void*)cur_prev + _fragmentLength);
-}
-
-void* _alloc_worst_fit(size_t tam) { 
-   if (tam > MEM_BASE) {
     #if DEBUG
       printf("WARNING: nao foi possivel alocar memoria \n");
-    #endif
-    return NULL;
-  }
-
-  int bt = 0;
-  Fragment* aux = NULL;
-  Fragment* cur_prev = _list;
-
-  while (cur_prev != NULL) {
-    if (cur_prev->size >= ((int)(tam + _fragmentLength)) && cur_prev->size >= bt) {
-      bt = cur_prev->size;
-      aux = cur_prev;
-    }
-    cur_prev = cur_prev->next;
-  }
-
-  if (aux == NULL) {
-    #if DEBUG
-      printf("WARNING: worst fit nao achou fragmento p/ alocar");
     #endif
     return NULL;
   }
