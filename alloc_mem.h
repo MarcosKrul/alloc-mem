@@ -40,17 +40,6 @@
 */
 #define MEM_BASE 1024
 
-/*
- *
- * Fragment.
- * Estrutura para lista de fragmentos da memoria.
- *
-*/
-typedef struct fragment_t {
-  int size;
-  struct fragment_t* next;
-} Fragment;
-
 
 /*
  *
