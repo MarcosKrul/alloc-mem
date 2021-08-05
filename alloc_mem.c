@@ -132,10 +132,10 @@ void* alloc_mem(size_t tam) {
 ================================================================ */
 
 void* _handle_make_ptr(size_t tam, Fragment* ptr) {
-  Fragment* aux = ptr;
-  ptr = ptr + tam;
+  Fragment* aux = ptr;  
+  ptr = (Fragment*) ((void*) ptr + tam + _fragmentLength);
 
-  const int new_length = aux->size - tam;
+  const int new_length = aux->size - tam - _fragmentLength;
   if (new_length > 0) {
     ptr->size = new_length;
     ptr->next = aux->next;
@@ -177,6 +177,9 @@ void* _alloc_first_fit(size_t tam) {
     // tam + estrutura de header (armazena o tamanho para liberar depois)
     if (cur->size >= ((int)(tam + _fragmentLength))) {
       return _handle_make_ptr(tam,cur);
+    } else if (cur->size >= (int) tam) {
+      cur->size = (-1)* cur->size;
+      return ((void*) cur + _fragmentLength);
     }
 
     cur = cur->next;
