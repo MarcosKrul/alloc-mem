@@ -26,7 +26,7 @@ Marcos Renan Krul
 | Diretiva | Descrição                         | Default    |
 |---       |---                                |---         |
 | ALG_ALOG | Algoritmo de alocação escolhido   | FIRST_FIT  |
-| MEM_BASE | Tamanho da memória base utilizada | 1024 (1KB) |
+| MEM_BASE | Tamanho da memória base utilizada | 1024       |
 | DEBUG    | Ativa mensagens para depuração    | 0          |
 
 ## Constantes para cada tipo de algoritmo
@@ -43,8 +43,8 @@ Marcos Renan Krul
 * Clonar o projeto
 
 ```
-    mkdir teste-aloc
-    cd teste-aloc
+    mkdir teste-alocacao
+    cd teste-alocacao
     git clone https://github.com/MarcosKrul/alloc-mem.git .
 ```
 
@@ -56,7 +56,7 @@ Marcos Renan Krul
     ./main
 ```
 
-* Com Makefile
+* Makefile
 
 ```
     make clean
