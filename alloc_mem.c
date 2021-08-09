@@ -211,6 +211,10 @@ void* _alloc_next_fit(size_t tam) {
     // busca o primeiro fragmento que possua tamanho desejado, a partir do ultimo
     if (cur->size >= ((int)(tam + _fragmentLength))) {
       return _handle_make_ptr(tam,cur);
+    } else if (cur->size >= (int) tam) {
+      cur->size = (-1)* cur->size;
+      _last = cur;
+      return ((void*) cur + _fragmentLength);
     }
 
     cur = cur->next == NULL? _list : cur->next;
