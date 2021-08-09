@@ -45,7 +45,6 @@ const size_t _fragmentLength = sizeof(Fragment);
  *
 */
 void* _alloc_next_fit(size_t);
-void* _alloc_best_fit(size_t);
 void* _alloc_first_fit(size_t);
 void* _alloc_best_worst_fit(size_t);
 void* _handle_make_ptr(size_t,Fragment*);
@@ -270,6 +269,10 @@ void* _alloc_best_worst_fit(size_t tam) {
     return NULL;
   }
 
-  return _handle_make_ptr(tam,aux);
+  if (aux->size >= ((int)(tam + _fragmentLength))) return _handle_make_ptr(tam,aux);
+  else {
+    aux->size = (-1)* aux->size;
+    return ((void*) aux + _fragmentLength);
+  }
 }
 
