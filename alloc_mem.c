@@ -44,6 +44,10 @@ const size_t _fragmentLength = sizeof(Fragment);
  * dependendo do tipo de alocacao escolhido (ALG_ALOC).
  *
 */
+int _digits(int);
+void _padding(int);
+char* _get_label(int);
+unsigned int _mod(int);
 void* _alloc_next_fit(size_t);
 void* _alloc_first_fit(size_t);
 void* _alloc_best_worst_fit(size_t);
@@ -66,12 +70,25 @@ void init_mem() {
 }
 
 void print_mem() {
+  int used = 0;
   Fragment* cur = _list;
 
+  printf("+--------+---------+----------------------------------+\n");
+  printf("| Em uso | Tamanho | Endereco -> Proximo              |\n");
+  printf("+--------+---------+----------------------------------+\n");
   while (cur != NULL) {
-    printf("%d - %p\n", cur->size, cur->next);
+    printf("|  %s   | %d", _get_label(cur->size), _mod(cur->size)); 
+    _padding((_digits(MEM_BASE) > 7? _digits(MEM_BASE) : 7) - _digits(cur->size)); 
+    if (cur->next == NULL) printf(" | %p -> NULL           |\n", cur);
+    else printf(" | %p -> %p |\n", cur, cur->next);
+    printf("+--------+---------+----------------------------------+\n");
+    if (cur->size < 0) used += cur->size;
     cur = cur->next;
   }
+  printf("| TAMANHO DO BLOCO TOTAL: %d", MEM_BASE); _padding(28-_digits(MEM_BASE)); printf("|\n");
+  printf("+-----------------------------------------------------+\n");
+  printf("| TOTAL EM USO: %d", _mod(used)); _padding(38-_digits(used)); printf("|\n");
+  printf("+-----------------------------------------------------+\n\n");
 }
 
 void free_mem(void* ptr) {
@@ -129,6 +146,25 @@ void* alloc_mem(size_t tam) {
 /* ================================================================
                         FUNCOES PRIVADAS
 ================================================================ */
+
+int _digits(int value) {
+  if (value == 0) return 1;
+
+  int aux = 0;
+  while (value != 0) {
+    value = value / 10;
+    aux++;
+  }
+
+  return aux;
+}
+
+char* _get_label(int tam) { return tam > 0 ? "Nao" : "Sim"; }
+
+void _padding(int x) { for(int i=0 ; i<x ; i++) printf(" "); }
+
+unsigned int _mod(int value) { return value > 0? value : (-1)*value; }
+
 
 void* _handle_make_ptr(size_t tam, Fragment* ptr) {
   Fragment* aux = ptr;  
