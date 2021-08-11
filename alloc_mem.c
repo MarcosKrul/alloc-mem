@@ -287,9 +287,9 @@ void* _alloc_best_worst_fit(size_t tam) {
   while (cur_prev != NULL) {
     #if ALG_ALOC == BEST_FIT || ALG_ALOC == WORST_FIT
     #if ALG_ALOC == BEST_FIT
-    if (cur_prev->size >= ((int)(tam + _fragmentLength)) && cur_prev->size <= sm) {
+    if (cur_prev->size >= (int)tam && cur_prev->size <= sm) {
     #elif ALG_ALOC == WORST_FIT 
-    if (cur_prev->size >= ((int)(tam + _fragmentLength)) && cur_prev->size >= sm) {
+    if (cur_prev->size >= (int)tam && cur_prev->size >= sm) {
     #endif
       sm = cur_prev->size;
       aux = cur_prev;
